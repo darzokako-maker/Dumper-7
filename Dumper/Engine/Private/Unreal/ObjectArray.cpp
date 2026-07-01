@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <fstream>
 #include <format>
@@ -25,7 +24,7 @@ constexpr inline std::array FFixedUObjectArrayLayouts =
 
 constexpr inline std::array FChunkedFixedUObjectArrayLayouts =
 {
-    // Sizin UE5 için güncellediğiniz varsayılan layout elemanı
+    // Pro Soccer Online ve Standart UE5 oyunları için en kararlı layout
     FChunkedFixedUObjectArrayLayout {
         .ObjectsOffset = 0x00,
         .MaxElementsOffset = 0x08,
@@ -43,7 +42,7 @@ constexpr inline std::array FChunkedFixedUObjectArrayLayouts =
         .NumChunksOffset = 0x10,
     },
 
-    // Back4Blood (Hata veren 55. satırın düzeltilmiş hali)
+    // Back4Blood
     FChunkedFixedUObjectArrayLayout {
         .ObjectsOffset = 0x10,
         .MaxElementsOffset = 0x00,
@@ -74,7 +73,6 @@ constexpr inline std::array FChunkedFixedUObjectArrayLayouts =
 
 bool IsAddressValidGObjects(const uintptr_t Address, const FFixedUObjectArrayLayout& Layout)
 {
-	/* It is assumed that the FUObjectItem layout is constant amongst all games using FFixedUObjectArray for ObjObjects. */
 	struct FUObjectItem
 	{
 		void* Object;
@@ -103,7 +101,7 @@ bool IsAddressValidGObjects(const uintptr_t Address, const FFixedUObjectArrayLay
 		return false;
 
 	const uintptr_t FifthObject = reinterpret_cast<uintptr_t>(ObjectsButDecrypted[0x5].Object);
-	const int32 IndexOfFithobject = *reinterpret_cast<int32_t*>(FifthObject + sizeof(void*) + sizeof(int32)); // FifthObject -> InternalIndex
+	const int32 IndexOfFithobject = *reinterpret_cast<int32_t*>(FifthObject + sizeof(void*) + sizeof(int32));
 
 	if (IndexOfFithobject != 0x5)
 		return false;
@@ -121,13 +119,14 @@ bool IsAddressValidGObjects(const uintptr_t Address, const FChunkedFixedUObjectA
 
 	void** ObjectsPtrButDecrypted = reinterpret_cast<void**>(ObjectArray::DecryptPtr(Objects));
 
-	if (NumChunks > 0x14 || NumChunks < 0x1)
+	// Pro Soccer Online UE5 sürümleri için Chunk limit doğrulamaları esnetildi
+	if (NumChunks > 0xFF || NumChunks < 0x1)
 		return false;
 
-	if (MaxChunks > 0x5FF || MaxChunks < 0x6)
+	if (MaxChunks > 0xFFFF || MaxChunks < 0x1)
 		return false;
 
-	if (NumElements <= 0x800 || MaxElements <= 0x10000)
+	if (NumElements <= 0x100 || MaxElements <= 0x100)
 		return false;
 
 	if (NumElements > MaxElements || NumChunks > MaxChunks)
@@ -141,7 +140,7 @@ bool IsAddressValidGObjects(const uintptr_t Address, const FChunkedFixedUObjectA
 	if ((ElementsPerChunk % 0x10) != 0)
 		return false;
 
-	if (ElementsPerChunk < 0x8000 || ElementsPerChunk > 0x80000)
+	if (ElementsPerChunk < 0x4000 || ElementsPerChunk > 0x80000)
 		return false;
 
 	const bool bNumChunksFitsNumElements = ((NumElements / ElementsPerChunk) + 1) == NumChunks;
@@ -204,7 +203,6 @@ void ObjectArray::InitDecryption(uint8_t* (*DecryptionFunction)(void* ObjPtr), c
 }
 
 
-/* We don't speak about this function... */
 void ObjectArray::Init(bool bScanAllMemory, const char* const ModuleName)
 {
 	if (!bScanAllMemory)
@@ -240,7 +238,6 @@ void ObjectArray::Init(bool bScanAllMemory, const char* const ModuleName)
 	bool bIsGObjectsChunked = false;
 	auto IsAddressValidGObjects = [MatchesAnyLayout, &bIsGObjectsChunked](const void* CurrentAddress) -> bool
 	{
-		//std::cerr << "checking addr: " << CurrentAddress << "\n";
 		if (MatchesAnyLayout(FFixedUObjectArrayLayouts, reinterpret_cast<uintptr_t>(CurrentAddress)))
 		{
 			bIsGObjectsChunked = false;
@@ -637,7 +634,6 @@ void AllFieldIterator::IterateToNextStruct()
 }
 void AllFieldIterator::IterateToNextStructWithMembers()
 {
-	// Loop, in case we meet a struct wihtout any properties
 	while (!CurrenStructHasMoreMembers())
 	{
 		IterateToNextStruct();
@@ -650,13 +646,6 @@ void AllFieldIterator::IterateToNextStructWithMembers()
 	}
 }
 
-
-/*
-* The compiler won't generate functions for a specific template type unless it's used in the .cpp file corresponding to the
-* header it was declatred in.
-*
-* See https://stackoverflow.com/questions/456713/why-do-i-get-unresolved-external-symbol-errors-when-using-templates
-*/
 template UEObject ObjectArray::FindObject<UEObject>(const std::string& FullName, EClassCastFlags RequiredType);
 template UEField ObjectArray::FindObject<UEField>(const std::string& FullName, EClassCastFlags RequiredType);
 template UEEnum ObjectArray::FindObject<UEEnum>(const std::string& FullName, EClassCastFlags RequiredType);
@@ -678,7 +667,7 @@ template UEObject ObjectArray::FindObjectFast<UEObject>(const std::string& FullN
 template UEField ObjectArray::FindObjectFast<UEField>(const std::string& FullName, EClassCastFlags RequiredType);
 template UEEnum ObjectArray::FindObjectFast<UEEnum>(const std::string& FullName, EClassCastFlags RequiredType);
 template UEStruct ObjectArray::FindObjectFast<UEStruct>(const std::string& FullName, EClassCastFlags RequiredType);
-template UEClass ObjectArray::FindObjectFast<UEClass>(const std::string& FullName, EClassCastFlags RequiredType);
+template UEClass ObjectArray::FindObjectFast<UEClass>(const std::string& Name, EClassCastFlags RequiredType);
 template UEFunction ObjectArray::FindObjectFast<UEFunction>(const std::string& FullName, EClassCastFlags RequiredType);
 template UEProperty ObjectArray::FindObjectFast<UEProperty>(const std::string& FullName, EClassCastFlags RequiredType);
 template UEByteProperty ObjectArray::FindObjectFast<UEByteProperty>(const std::string& FullName, EClassCastFlags RequiredType);
