@@ -25,14 +25,22 @@ constexpr inline std::array FFixedUObjectArrayLayouts =
 
 constexpr inline std::array FChunkedFixedUObjectArrayLayouts =
 {
-	{ .ObjectsOffset = 0x00, .MaxElementsOffset = 0x10, .NumElementsOffset = 0x14, .MaxChunksOffset = 0x18, .NumChunksOffset = 0x1C }
+	{ .ObjectsOffset = 0x00, .MaxElementsOffset = 0x08, .NumElementsOffset = 0x0C, .MaxChunksOffset = 0x10, .NumChunksOffset = 0x14 },
+
 
 	{
-		.ObjectsOffset = 0x00,
-		.MaxElementsOffset = 0x10,
-		.NumElementsOffset = 0x14,
-		.MaxChunksOffset = 0x18,
-		.NumChunksOffset = 0x1C,
+		
+    .ObjectsOffset = 0x00,
+    .MaxElementsOffset = 0x10,
+    .NumElementsOffset = 0x14,
+    .MaxChunksOffset = 0x18,
+    .NumChunksOffset = 0x1C,
+
+
+		
+		
+		
+		
 	},
 	FChunkedFixedUObjectArrayLayout // UE5.8 Developement Build
 	{
