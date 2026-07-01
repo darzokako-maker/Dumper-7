@@ -1,4 +1,4 @@
-name: Build and Upload Artifacts
+Name: Build and Upload Artifacts
 
 on:
   push:
@@ -22,13 +22,13 @@ jobs:
       uses: microsoft/setup-msbuild@v2
 
     - name: Build Dumper Project
-      run: msbuild Dumper-7.sln /p:Configuration=Release /p:Platform=x64 /p:WarningLevel=0
+      run: msbuild Dumper/Dumper.vcxproj /p:Configuration=Release /p:Platform=x64 /p:WarningLevel=0
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: Dumper-7_x64-Release
         path: |
-          **/Release/Dumper*.dll
-          **/Release/Dumper*.pdb
+          x64/Release/Dumper*.dll
+          x64/Release/Dumper*.pdb
           
