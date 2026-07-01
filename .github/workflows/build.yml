@@ -29,6 +29,6 @@ jobs:
       with:
         name: Dumper-7_x64-Release
         path: |
-          x64/Release/Dumper*.dll
-          x64/Release/Dumper*.pdb
+          **/Release/Dumper*.dll
+          **/Release/Dumper*.pdb
           
