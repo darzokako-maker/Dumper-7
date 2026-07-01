@@ -25,58 +25,52 @@ constexpr inline std::array FFixedUObjectArrayLayouts =
 
 constexpr inline std::array FChunkedFixedUObjectArrayLayouts =
 {
-	{ .ObjectsOffset = 0x00, .MaxElementsOffset = 0x08, .NumElementsOffset = 0x0C, .MaxChunksOffset = 0x10, .NumChunksOffset = 0x14 },
+    // Sizin UE5 için güncellediğiniz varsayılan layout elemanı
+    FChunkedFixedUObjectArrayLayout {
+        .ObjectsOffset = 0x00,
+        .MaxElementsOffset = 0x08,
+        .NumElementsOffset = 0x0C,
+        .MaxChunksOffset = 0x10,
+        .NumChunksOffset = 0x14,
+    },
 
+    // UE5.0 Development Build
+    FChunkedFixedUObjectArrayLayout {
+        .ObjectsOffset = 0x00,
+        .MaxElementsOffset = 0x0C,
+        .NumElementsOffset = 0x08,
+        .MaxChunksOffset = 0x14,
+        .NumChunksOffset = 0x10,
+    },
 
-	
-		
-    {
-    .ObjectsOffset = 0x00,
-    .MaxElementsOffset = 0x08,
-    .NumElementsOffset = 0x0C,
-    .MaxChunksOffset = 0x10,
-    .NumChunksOffset = 0x14,
-},
+    // Back4Blood (Hata veren 55. satırın düzeltilmiş hali)
+    FChunkedFixedUObjectArrayLayout {
+        .ObjectsOffset = 0x10,
+        .MaxElementsOffset = 0x00,
+        .NumElementsOffset = 0x04,
+        .MaxChunksOffset = 0x08,
+        .NumChunksOffset = 0x0C,
+    },
 
+    // Multiversus
+    FChunkedFixedUObjectArrayLayout {
+        .ObjectsOffset = 0x18,
+        .MaxElementsOffset = 0x10,
+        .NumElementsOffset = 0x00,
+        .MaxChunksOffset = 0x14,
+        .NumChunksOffset = 0x20,
+    },
 
-		
-		
-		
-		
-	
-	FChunkedFixedUObjectArrayLayout // UE5.8 Developement Build
-	{
-		.ObjectsOffset = 0x00, 
-		.MaxElementsOffset = 0x0C,
-		.NumElementsOffset = 0x08,
-		.MaxChunksOffset = 0x14,
-		.NumChunksOffset = 0x10,
-	}
-	FChunkedFixedUObjectArrayLayout // Back4Blood
-	{
-		.ObjectsOffset = 0x10, // last
-		.MaxElementsOffset = 0x00,
-		.NumElementsOffset = 0x04,
-		.MaxChunksOffset = 0x08,
-		.NumChunksOffset = 0x0C,
-	},
-	FChunkedFixedUObjectArrayLayout // Mutliversus
-	{
-		.ObjectsOffset = 0x18,
-		.MaxElementsOffset = 0x10,
-		.NumElementsOffset = 0x00, // first
-		.MaxChunksOffset = 0x14,
-		.NumChunksOffset = 0x20,
-	},
-	FChunkedFixedUObjectArrayLayout // MindsEye
-	{
-		.ObjectsOffset = 0x18,
-		.MaxElementsOffset = 0x00, // first
-		.NumElementsOffset = 0x14,
-		.MaxChunksOffset = 0x10,
-		.NumChunksOffset = 0x04,
-	}
+    // MindsEye
+    FChunkedFixedUObjectArrayLayout {
+        .ObjectsOffset = 0x18,
+        .MaxElementsOffset = 0x00,
+        .NumElementsOffset = 0x14,
+        .MaxChunksOffset = 0x10,
+        .NumChunksOffset = 0x04,
+    }
 };
+
 
 bool IsAddressValidGObjects(const uintptr_t Address, const FFixedUObjectArrayLayout& Layout)
 {
